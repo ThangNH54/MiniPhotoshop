@@ -2,6 +2,7 @@
 #include "HandleImage.h"
 #include "ToolForm.h"
 #include "HistogramForm.h"
+#include "MixImage.h"
 #include <opencv2/opencv.hpp>
 
 using namespace cv;
@@ -21,7 +22,7 @@ namespace MiniPhotoshop {
 	/// </summary>
 	public ref class MainForm : public System::Windows::Forms::Form
 	{
-#define IMAGE_SCALE 1.1
+		#define IMAGE_SCALE 1.1
 		int maxWidthImg, maxHeightImg;
 		System::Drawing::Point^ p1, ^ p2;
 		bool isMouseDown = false;
@@ -57,24 +58,7 @@ namespace MiniPhotoshop {
 	private: System::Windows::Forms::ToolStripMenuItem^ menuSave;
 	private: System::Windows::Forms::ToolStripMenuItem^ menuSaveAs;
 	private: System::Windows::Forms::Panel^ panel;
-	public: static System::Windows::Forms::PictureBox^ pictureBox;
-	private:
-
-	private:
-
-	private:
-
-	private:
-
-	private:
-
-	private:
-
-	private:
-
-	private:
-
-
+	public:static  System::Windows::Forms::PictureBox^ pictureBox;
 	private: System::Windows::Forms::Button^ btnScaleTool;
 	public:static int imgX, imgY;
 	private: System::Windows::Forms::Button^ btbHistorgam;
@@ -208,6 +192,7 @@ namespace MiniPhotoshop {
 			this->button3->TabIndex = 4;
 			this->button3->Text = L"btn";
 			this->button3->UseVisualStyleBackColor = true;
+			this->button3->Click += gcnew System::EventHandler(this, &MainForm::Button3_Click);
 			// 
 			// button4
 			// 
@@ -354,7 +339,11 @@ namespace MiniPhotoshop {
 		}
 		else MessageBox::Show("vui long mo file truoc.");
 	}
-	};
+	private: System::Void Button3_Click(System::Object^ sender, System::EventArgs^ e) {
+		MiniPhotoshop::MixImage^ form = gcnew MixImage();
+		form->Show();
+	}
+};
 
 }
 

@@ -138,6 +138,7 @@
     <ClCompile Include="HandleImage.cpp" />
     <ClCompile Include="HistogramForm.cpp" />
     <ClCompile Include="MainForm.cpp" />
+    <ClCompile Include="MixImage.cpp" />
     <ClCompile Include="ToolForm.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -148,6 +149,9 @@
     <ClInclude Include="MainForm.h">
       <FileType>CppForm</FileType>
     </ClInclude>
+    <ClInclude Include="MixImage.h">
+      <FileType>CppForm</FileType>
+    </ClInclude>
     <ClInclude Include="ToolForm.h">
       <FileType>CppForm</FileType>
     </ClInclude>
@@ -155,6 +159,9 @@
   <ItemGroup>
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.h</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MixImage.resx">
+      <DependentUpon>MixImage.h</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

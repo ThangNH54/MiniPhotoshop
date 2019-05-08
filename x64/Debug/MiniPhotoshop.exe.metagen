@@ -1,4 +1,5 @@
   MiniPhotoshop.MainForm.resources - Embedded, ContainedInManifestFile, 
+  MiniPhotoshop.MixImage.resources - Embedded, ContainedInManifestFile, 
 ImageRuntimeVersion: v4.0.30319
 Assembly MiniPhotoshop, Version=0.0.*, Culture=Invariant Language (Invariant Country): 
 	hash=SHA1, flags=PublicKey
@@ -26,6 +27,15 @@ Class MiniPhotoshop.HistogramForm: AutoLayout, AnsiClass, Class, Public, BeforeF
 Class MiniPhotoshop.ToolForm: AutoLayout, AnsiClass, Class, Public, BeforeFieldInit
   :System.Windows.Forms.Form
     Void .ctor(): PrivateScope, Public, HideBySig, SpecialName, RTSpecialName
+Class MiniPhotoshop.MixImage: AutoLayout, AnsiClass, Class, Public, BeforeFieldInit
+  :System.Windows.Forms.Form
+    Void .ctor(): PrivateScope, Public, HideBySig, SpecialName, RTSpecialName
+  Fields:
+    System.Windows.Forms.PictureBox pictureBoxBg : Public
+    System.Windows.Forms.PictureBox pictureBoxOut : Public
+    System.Windows.Forms.PictureBox pictureBoxInput : Public, Static
+    System.Windows.Forms.Button btnOpenInput : Public, Static
+    System.Windows.Forms.Button btnOpenBg : Public, Static
 Class MiniPhotoshop.MainForm: AutoLayout, AnsiClass, Class, Public, BeforeFieldInit
   :System.Windows.Forms.Form
     Void .ctor(): PrivateScope, Public, HideBySig, SpecialName, RTSpecialName

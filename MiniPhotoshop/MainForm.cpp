@@ -46,7 +46,6 @@ namespace MiniPhotoshop
 
 			pictureBox->SizeMode = PictureBoxSizeMode::Zoom;
 
-
 			std::string fileName = HandleImage::toStdString(open->FileName->ToString());
 			currentPath = fileName;
 
