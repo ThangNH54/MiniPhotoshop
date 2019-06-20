@@ -26,6 +26,16 @@ namespace MiniPhotoshop
 		Bitmap^ bmp = Bitmap::FromHbitmap((IntPtr)hBit);
 		HistogramForm::pictureHitogram->Image = bmp;
 	}
+	Void HistogramForm::loadHistogramCanny(Mat img)
+	{
+		Mat imgHistogram = img;
+		cvtColor(imgHistogram, imgHistogram, cv::COLOR_BGR2BGRA);
+
+		HBITMAP hBit = CreateBitmap(imgHistogram.cols, imgHistogram.rows, 1, 32, imgHistogram.data);
+
+		Bitmap^ bmp = Bitmap::FromHbitmap((IntPtr)hBit);
+		HistogramForm::pictureHistogramCanny->Image = bmp;
+	}
 
 	void HistogramForm::HistogramGray()
 	{
@@ -60,6 +70,7 @@ namespace MiniPhotoshop
 				cv::Scalar::all(255));
 		}
 		HistogramForm::loadHistogram(hist_image);
+		HistogramForm::loadHistogramCanny(hist_image);
 	}
 
 	Void HistogramForm::BtnDispay_Click(System::Object^ sender, System::EventArgs^ e)
@@ -145,6 +156,15 @@ namespace MiniPhotoshop
 			return dispBlue;
 	}
 
+	Mat HistogramForm::CannyEdgeDetection(Mat img)
+	{
+		Mat imgBinary, imgGauss, imgCanny;
+		cvtColor(img.clone(), imgBinary, ::COLOR_BGR2GRAY);
+		GaussianBlur(imgBinary, imgGauss, cv::Size(5, 5), 0);
+		Canny(imgGauss, imgCanny, (double)(tbNguongT->Value), (double)(tbNguongH->Value), 5);
+		return imgCanny;
+	}
+
 	Void HistogramForm::BtnHGray_Click(System::Object^ sender, System::EventArgs^ e)
 	{
 		HistogramGray();
@@ -160,5 +180,13 @@ namespace MiniPhotoshop
 	Void HistogramForm::BntHBlue_Click(System::Object^ sender, System::EventArgs^ e)
 	{
 		HistogramForm::loadHistogram(HistogramForm::HistogramRGB("BLUE"));
+	}
+	Void HistogramForm::BtnCannyvcl_Click(System::Object^ sender, System::EventArgs^ e)
+	{
+		Mat imgSrc = MainForm::getImage().clone();
+		Mat result = HistogramForm::CannyEdgeDetection(imgSrc);
+		namedWindow("Canny_Edge_Detection");
+		imshow("Canny_Edge_Detection", result);
+		waitKey(0);
 	}
 }
