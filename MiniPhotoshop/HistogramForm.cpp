@@ -1,11 +1,20 @@
-#include "HistogramForm.h"
+﻿#include "HistogramForm.h"
 #include "MainForm.h"
+#include <opencv2/highgui.hpp>
+#include <opencv2/imgproc.hpp>
+#include <stdio.h>
+#include <string.h>
+
+///
+using namespace cv;
 namespace MiniPhotoshop
 {
+
 	MiniPhotoshop::HistogramForm::HistogramForm()
 	{
 		InitializeComponent();
 	}
+
 
 	Void HistogramForm::loadHistogram(Mat img)
 	{
@@ -45,16 +54,15 @@ namespace MiniPhotoshop
 		for (int b = 0; b < bins; b++) {
 			float const binVal = hist.at<float>(b);
 			int   const height = cvRound(binVal * hist_height / max_val);
-			cv::line
-			(hist_image
-				, cv::Point(b, hist_height - height), cv::Point(b, hist_height)
-				, cv::Scalar::all(255)
-			);
+			cv::line(hist_image,
+				cv::Point(b, hist_height - height),
+				cv::Point(b, hist_height),
+				cv::Scalar::all(255));
 		}
 		HistogramForm::loadHistogram(hist_image);
 	}
 
-	Void HistogramForm::BtnDispay_Click(System::Object ^ sender, System::EventArgs ^ e)
+	Void HistogramForm::BtnDispay_Click(System::Object^ sender, System::EventArgs^ e)
 	{
 		//g(x) = Contrast f(x) + Bright
 		int b = trackBright->Value;
@@ -70,7 +78,7 @@ namespace MiniPhotoshop
 		}
 		MainForm::DisplayPictureBox(new_image);
 	}
-	Mat HistogramForm::correctGamma(Mat & img, double gamma) {
+	Mat HistogramForm::correctGamma(Mat& img, double gamma) {
 		double inverse_gamma = 1.0 / gamma;
 
 		Mat lut_matrix(1, 256, CV_8UC1);
@@ -83,11 +91,74 @@ namespace MiniPhotoshop
 
 		return result;
 	}
-	Void HistogramForm::BtnGamma_Click(System::Object ^ sender, System::EventArgs ^ e)
+
+	Void HistogramForm::BtnGamma_Click(System::Object^ sender, System::EventArgs^ e)
 	{
 		Mat img = MainForm::getImageTmp().clone();
 		double valueGamma = (double)(trackContrast->Value) / 10;
 		Mat result = HistogramForm::correctGamma(img, valueGamma);
 		MainForm::DisplayPictureBox(result);
+	}
+
+	Mat	HistogramForm::HistogramRGB(char* imgColor)
+	{
+		Mat imageSrc = MainForm::getImageTmp().clone();
+
+		std::vector<Mat> imageRGB;
+		// Khởi tạo các biến lưu trữ 3 bênh màu
+		Mat imageRed, imageGreen, imageBlue;
+
+		int width = 256, height = 400;
+		int sizeHistogram = 255;
+		float range[] = { 0, 255 };
+		const float* histogramRange = { range };
+
+		// Hàm này có tác dụng tách imageSrc thành 3 kênh màu.
+		split(imageSrc, imageRGB);
+
+		// Tính toán cho từng kênh màu và vẽ biểu đồ Histogram
+		calcHist(&imageRGB[0], 1, 0, Mat(), imageRed, 1, &sizeHistogram, &histogramRange, true, false);
+		calcHist(&imageRGB[1], 1, 0, Mat(), imageGreen, 1, &sizeHistogram, &histogramRange, true, false);
+		calcHist(&imageRGB[2], 1, 0, Mat(), imageBlue, 1, &sizeHistogram, &histogramRange, true, false);
+
+		int bin = cvRound((double)width / sizeHistogram);
+
+		Mat dispRed(width, height, CV_8UC3, Scalar(255, 255, 255));
+		Mat dispGreen = dispRed.clone();
+		Mat dispBlue = dispRed.clone();
+
+		normalize(imageBlue, imageBlue, 0, dispBlue.rows, NORM_MINMAX, -1, Mat());
+		normalize(imageGreen, imageGreen, 0, dispGreen.rows, NORM_MINMAX, -1, Mat());
+		normalize(imageRed, imageRed, 0, dispRed.rows, NORM_MINMAX, -1, Mat());
+
+		for (int i = 0; i < 255; i++)
+		{
+			line(dispRed, cv::Point(bin * (i), height), cv::Point(bin * (i), height - cvRound(imageRed.at<float>(i))), Scalar(0, 0, 255), 2, 8, 0);
+			line(dispGreen, cv::Point(bin * (i), height), cv::Point(bin * (i), height - cvRound(imageGreen.at<float>(i))), Scalar(0, 255, 0), 2, 8, 0);
+			line(dispBlue, cv::Point(bin * (i), height), cv::Point(bin * (i), height - cvRound(imageBlue.at<float>(i))), Scalar(255, 0, 0), 2, 8, 0);
+		}
+		if (strcmp(imgColor, "RED") == 0)
+			return dispRed;
+		if (strcmp(imgColor, "GREEN") == 0)
+			return dispGreen;
+		if (strcmp(imgColor, "BLUE") == 0)
+			return dispBlue;
+	}
+
+	Void HistogramForm::BtnHGray_Click(System::Object^ sender, System::EventArgs^ e)
+	{
+		HistogramGray();
+	}
+	Void HistogramForm::BtnHGreen_Click(System::Object^ sender, System::EventArgs^ e)
+	{
+		HistogramForm::loadHistogram(HistogramForm::HistogramRGB("GREEN"));
+	}
+	Void HistogramForm::BtnHRed_Click(System::Object^ sender, System::EventArgs^ e)
+	{
+		HistogramForm::loadHistogram(HistogramForm::HistogramRGB("RED"));
+	}
+	Void HistogramForm::BntHBlue_Click(System::Object^ sender, System::EventArgs^ e)
+	{
+		HistogramForm::loadHistogram(HistogramForm::HistogramRGB("BLUE"));
 	}
 }
